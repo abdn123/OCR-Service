@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.Backend_Project.Entities.User;
 import com.example.Backend_Project.Repositories.UserDao;
+import com.example.Backend_Project.Services.AuthenticationService;
 import com.example.Backend_Project.config.JwtUtils;
-import com.example.Backend_Project.dto.AunthenticationRequest;
+import com.example.Backend_Project.dto.LoginUserDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,21 +23,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationController {
     
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationService authenticationService;
     private final UserDao userDao;
     private final JwtUtils jwtUtils;
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<String> authenticate(
-        @RequestBody AunthenticationRequest request
+    @PostMapping("/login")
+    public ResponseEntity<User> authenticate(
+        @RequestBody LoginUserDto request
     ) {
-        authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
-        System.out.println(request.getEmail());
-        final UserDetails user = userDao.findUserByEmail(request.getEmail());
-        if (user != null) {
-            return ResponseEntity.ok("AccessToken: "+jwtUtils.generateToken(user));
+        User registeredUser = authenticationService.authenticate(request);
+        
+        String jwtToken = jwtUtils.generateToken(registeredUser);
+
+        LoginResponse loginResponse = new LoginResponse().setToken(jwtToken).setExpiresIn(jwtService.getExpirationTime());
+
+        if (registeredUser != null) {
+            return ResponseEntity.ok(jwtToken);
         }
         return ResponseEntity.status(400).body("some error has occurred");
     }
