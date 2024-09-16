@@ -2,6 +2,8 @@ package com.example.Backend_Project.config;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,14 +16,15 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 
 @Component
-@RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
     
-    final UserDetailsService userDetailsService;
-    final JwtUtils jwtUtils;
+    @Lazy
+    @Autowired
+    UserDetailsService userDetailsService;
+    @Autowired
+    JwtUtils jwtUtils;
 
     @Override
     protected void doFilterInternal(
@@ -29,7 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         HttpServletResponse response, 
         FilterChain filterChain) throws ServletException, IOException {
         
-            final String AuthHeader = request.getHeader("AUTHORIZATION");
+            final String AuthHeader = request.getHeader("Authorization");
             final String userEmail;
             final String jwtToken;
             

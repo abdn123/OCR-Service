@@ -1,6 +1,8 @@
 package com.example.Backend_Project.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -11,15 +13,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.example.Backend_Project.dao.UserDao;
+import com.example.Backend_Project.Repositories.UserDao;
 
 import lombok.RequiredArgsConstructor;
 
+@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class securityConfig {
@@ -29,24 +32,22 @@ public class securityConfig {
     
     @Bean    
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf().disable()
-            .authorizeRequests()
-            .requestMatchers("/**/auth/**").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+        return http
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers(HttpMethod.POST, "/api/v1/auth/*").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/v1/hello").hasRole("ADMIN")
+            .anyRequest().authenticated())
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -58,20 +59,17 @@ public class securityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return NoOpPasswordEncoder.getInstance();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-                UserDetails user = userDao.findUserByEmail(email);
-                if (user == null) {
-                    throw new UsernameNotFoundException("User not found with email: " + email);
-                }
-                return user;
+        return (String email) -> {
+            UserDetails user = userDao.findUserByEmail(email);
+            if (user == null) {
+                throw new UsernameNotFoundException("User not found with email: " + email);
             }
+            return user;
         };
     }
 }

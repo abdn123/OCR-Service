@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.Backend_Project.Repositories.UserDao;
 import com.example.Backend_Project.config.JwtUtils;
-import com.example.Backend_Project.dao.UserDao;
 import com.example.Backend_Project.dto.AunthenticationRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -32,9 +32,10 @@ public class AuthenticationController {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
+        System.out.println(request.getEmail());
         final UserDetails user = userDao.findUserByEmail(request.getEmail());
         if (user != null) {
-            return ResponseEntity.ok(jwtUtils.generateToken(user));
+            return ResponseEntity.ok("AccessToken: "+jwtUtils.generateToken(user));
         }
         return ResponseEntity.status(400).body("some error has occurred");
     }
