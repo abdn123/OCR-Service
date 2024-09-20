@@ -1,4 +1,4 @@
-package com.example.Backend_Project.config;
+package com.example.Backend_Project.Services;
 
 import java.security.Key;
 import java.util.Date;
@@ -18,7 +18,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
-public class JwtUtils {
+public class JwtService {
 
     @Value("${security.jwt.secret-key}")
     private String jwtSigningKey;
@@ -50,15 +50,15 @@ public class JwtUtils {
         
     }
 
-    private String createToken(UserDetails userDetails) {
+    private String createToken(User user) {
         return Jwts.builder()
-            .setSubject(userDetails.getUsername())
-            .claim("authorities", userDetails.getAuthorities())
+            .setSubject(user.getUsername())
+            .claim("authorities", user.getAuthorities())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24)))
             .signWith(SignatureAlgorithm.HS256, getSignInKey()).compact();
     }
-
+ 
     public Boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

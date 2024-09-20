@@ -1,45 +1,51 @@
 package com.example.Backend_Project.controllers;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Backend_Project.Entities.User;
-import com.example.Backend_Project.Repositories.UserDao;
 import com.example.Backend_Project.Services.AuthenticationService;
-import com.example.Backend_Project.config.JwtUtils;
+import com.example.Backend_Project.Services.JwtService;
+import com.example.Backend_Project.dto.LoginResponse;
 import com.example.Backend_Project.dto.LoginUserDto;
 
 import lombok.RequiredArgsConstructor;
 
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
     
     private final AuthenticationService authenticationService;
-    private final UserDao userDao;
-    private final JwtUtils jwtUtils;
-
+    private final JwtService jwtService;
+    
     @PostMapping("/login")
-    public ResponseEntity<User> authenticate(
+    public ResponseEntity<LoginResponse> authenticate(
         @RequestBody LoginUserDto request
     ) {
+
         User registeredUser = authenticationService.authenticate(request);
         
-        String jwtToken = jwtUtils.generateToken(registeredUser);
-
-        LoginResponse loginResponse = new LoginResponse().setToken(jwtToken).setExpiresIn(jwtService.getExpirationTime());
-
+        LoginResponse loginResponse = new LoginResponse();
+        
+        String jwtToken = jwtService.generateToken(registeredUser);
+        
+        
         if (registeredUser != null) {
-            return ResponseEntity.ok(jwtToken);
-        }
-        return ResponseEntity.status(400).body("some error has occurred");
+            
+            loginResponse.setToken(jwtToken);
+            loginResponse.setSetExpiresIn(jwtService.extractExpiration(jwtToken));
+            return ResponseEntity.ok(loginResponse);
+            
+    }
+
+        
+        return ResponseEntity.status(401).body(loginResponse);
     }
 }

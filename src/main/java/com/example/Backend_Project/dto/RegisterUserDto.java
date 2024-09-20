@@ -10,6 +10,8 @@ public class RegisterUserDto {
 
     private boolean active;
 
+    private String role;
+
     public String getUsername() {
         return username;
     }
@@ -40,5 +42,13 @@ public class RegisterUserDto {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
