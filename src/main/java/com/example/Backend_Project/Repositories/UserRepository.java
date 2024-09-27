@@ -14,5 +14,4 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     
     @Query("select * from User where username=(?1)")
     Optional<User> findByUsername(String username);
-
 }

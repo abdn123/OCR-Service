@@ -2,6 +2,7 @@ package com.example.Backend_Project.Services;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -25,6 +26,10 @@ public class JwtService {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public List<String> getRoles(Claims claims) {
+        return (List<String>) claims.get("roles");
     }
 
     public Date extractExpiration(String token) { return extractClaim(token, Claims::getExpiration); }
@@ -53,7 +58,7 @@ public class JwtService {
     private String createToken(User user) {
         return Jwts.builder()
             .setSubject(user.getUsername())
-            .claim("authorities", user.getAuthorities())
+            .claim("authorities", user.getRole())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24)))
             .signWith(SignatureAlgorithm.HS256, getSignInKey()).compact();

@@ -2,11 +2,24 @@ package com.example.Backend_Project.dto;
 
 import java.util.Date;
 
-public class LoginResponse {
-    private String token;
+import com.example.Backend_Project.enums.UserRole;
 
+public class LoginResponse {
+
+    private String invalidCredentialsError;
+    
+    private String token;
+    
     private Date setExpiresIn;
 
+    private UserRole role;
+    
+    public LoginResponse() {}
+    
+    public LoginResponse(String err) {
+        invalidCredentialsError = err;
+    }
+    
     public String getToken() {
         return token;
     }
@@ -21,6 +34,18 @@ public class LoginResponse {
 
     public void setSetExpiresIn(Date setExpiresIn) {
         this.setExpiresIn = setExpiresIn;
+    }
+
+    public String getInvalidCredentialsError() {
+        return invalidCredentialsError;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
     

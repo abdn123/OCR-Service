@@ -1,5 +1,7 @@
 package com.example.Backend_Project.dto;
 
+import com.example.Backend_Project.enums.UserRole;
+
 public class RegisterUserDto {
     
     private String username;
@@ -10,7 +12,7 @@ public class RegisterUserDto {
 
     private boolean active;
 
-    private String role;
+    private UserRole role;
 
     public String getUsername() {
         return username;
@@ -44,11 +46,11 @@ public class RegisterUserDto {
         this.active = active;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 }

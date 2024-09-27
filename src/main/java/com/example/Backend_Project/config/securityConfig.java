@@ -17,6 +17,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -36,10 +37,15 @@ public class securityConfig {
             .cors((cors -> cors.configurationSource(corsConfigurationSource())))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(HttpMethod.POST, "/api/v1/auth/*").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/hello").hasRole("ADMIN") 
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/users/*").hasRole("ADMIN")
                 .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider)
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(
+                (request, response, exception) -> {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
+                }
+            ))
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }

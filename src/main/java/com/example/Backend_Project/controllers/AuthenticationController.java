@@ -23,29 +23,31 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationController {
     
     private final AuthenticationService authenticationService;
-    private final JwtService jwtService;
-    
+    private final JwtService jwtService;    
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(
         @RequestBody LoginUserDto request
     ) {
-
-        User registeredUser = authenticationService.authenticate(request);
         
         LoginResponse loginResponse = new LoginResponse();
-        
-        String jwtToken = jwtService.generateToken(registeredUser);
-        
-        
-        if (registeredUser != null) {
-            
+        try {
+            User registeredUser = authenticationService.authenticate(request);
+            if (registeredUser == null) {
+                return ResponseEntity.status(401).body(new LoginResponse("Incorrect Username or Password"));    
+            }
+            String jwtToken = jwtService.generateToken(registeredUser);
             loginResponse.setToken(jwtToken);
             loginResponse.setSetExpiresIn(jwtService.extractExpiration(jwtToken));
             return ResponseEntity.ok(loginResponse);
-            
-    }
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(new LoginResponse(e.getMessage()));
+        }
+        
+        
+        
 
         
-        return ResponseEntity.status(401).body(loginResponse);
+
     }
 }

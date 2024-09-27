@@ -4,10 +4,18 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.example.Backend_Project.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -20,6 +28,7 @@ import lombok.EqualsAndHashCode;
 public class User implements UserDetails {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_ID",unique = true, nullable = false)
     private Long user_ID;
 
@@ -29,6 +38,7 @@ public class User implements UserDetails {
     @Column(unique=true, length=100, nullable=false)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
     
@@ -36,11 +46,12 @@ public class User implements UserDetails {
     private boolean active;
 
     @Column
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     public User(){}
 
-    public User(String username, String email, String password, boolean active, String role) {
+    public User(String username, String email, String password, boolean active, UserRole role) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -50,11 +61,10 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-        // if (this.role == UserRole.ADMIN) {
-        // return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        // }
-        // return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        if (this.role == UserRole.ADMIN) {
+        return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        }
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
@@ -87,11 +97,23 @@ public class User implements UserDetails {
         return active;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public Long getUser_ID() {
+        return user_ID;
+    }
+
+    public void setUser_ID(Long user_ID) {
+        this.user_ID = user_ID;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
