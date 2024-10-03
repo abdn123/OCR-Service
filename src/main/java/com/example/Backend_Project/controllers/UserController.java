@@ -3,8 +3,6 @@ package com.example.Backend_Project.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,10 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.Backend_Project.Entities.User;
 import com.example.Backend_Project.Services.JwtService;
 import com.example.Backend_Project.Services.UserService;
+import com.example.Backend_Project.dto.GetUsersDto;
 import com.example.Backend_Project.dto.RegisterUserDto;
-import com.example.Backend_Project.dto.UserMessage;
+import com.example.Backend_Project.dto.ResetPasswordDto;
+import com.example.Backend_Project.dto.UserMessageDto;
 
 import lombok.RequiredArgsConstructor;
+
 
 @RequestMapping("/users")
 @RestController
@@ -27,15 +28,6 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
     private final UserService userService;
     private final JwtService jwtService;
-    
-    @GetMapping("/me")
-    public ResponseEntity<User> authenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        User currentUser = (User) authentication.getPrincipal();
-
-        return ResponseEntity.ok(currentUser);
-    }
 
     @GetMapping
     public ResponseEntity<List<User>> allUsers() {
@@ -53,10 +45,10 @@ public class UserController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<UserMessage> deleteUser(@RequestHeader(value="Authorization") String auth, @RequestBody User user) {
+    public ResponseEntity<UserMessageDto> deleteUser(@RequestHeader(value="Authorization") String auth, @RequestBody User user) {
         
         auth = auth.substring(7);
-        UserMessage del = new UserMessage();
+        UserMessageDto del = new UserMessageDto();
         
         if(jwtService.extractUsername(auth).equals(user.getUsername())) {
             del.setMessage("Unable to delete, user is currently active");
@@ -73,10 +65,10 @@ public class UserController {
     }
     
     @PostMapping("/update")
-    public ResponseEntity<UserMessage> updateUser(@RequestHeader(value="Authorization") String auth, @RequestBody User user) {
+    public ResponseEntity<UserMessageDto> updateUser(@RequestHeader(value="Authorization") String auth, @RequestBody User user) {
         
         auth = auth.substring(7);
-        UserMessage del = new UserMessage();
+        UserMessageDto del = new UserMessageDto();
         
         if(jwtService.extractUsername(auth).equals(user.getUsername())) {
             del.setMessage("Unable to update, user is currently active");
@@ -91,4 +83,26 @@ public class UserController {
         return ResponseEntity.ok(del);
     }
     
+    @PostMapping("/resetpassword")
+    public ResponseEntity<UserMessageDto> resetPassword(@RequestBody ResetPasswordDto request) {
+        
+        UserMessageDto response = new UserMessageDto();
+        try {
+            User user = userService.resetPassword(request);
+            response.setMessage("Password Changed Successfully");
+            response.setUsername(user.getUsername());
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/getusers")
+    public ResponseEntity<GetUsersDto> getUsers() {
+        GetUsersDto response = new GetUsersDto();
+        response.setTotalUsers(userService.getCount());
+        response.setActiveUsers(userService.getCountActive());
+
+        return ResponseEntity.ok(response);
+    }
 }

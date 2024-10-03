@@ -3,7 +3,7 @@ package com.example.Backend_Project.dto;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class UserMessage {
+public class UserMessageDto {
 
     String message;
 

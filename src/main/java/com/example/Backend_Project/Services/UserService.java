@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.Backend_Project.Entities.User;
 import com.example.Backend_Project.Repositories.UserRepository;
 import com.example.Backend_Project.dto.RegisterUserDto;
+import com.example.Backend_Project.dto.ResetPasswordDto;
 
 @Service
 public class UserService {
@@ -27,9 +28,19 @@ public class UserService {
     }
 
     public User signup(RegisterUserDto input) {
-        User user = new User(
-            input.getUsername(), input.getEmail(), input.getPassword(), input.isActive(), input.getRole()
-        );
+        
+        User user = new User();
+        
+        user.setUsername(input.getUsername());
+        user.setEmail(input.getEmail());
+        user.setPassword(input.getPassword());
+        user.setActive(input.isActive());
+        user.setRole(input.getRole());
+        
+        if(input.getImage() != null)
+            user.setImage(input.getImage());
+        else
+            user.setImage(null);
 
         return userRepository.save(user);
     }
@@ -41,14 +52,45 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        User update = userRepository.findByUsername(user.getUsername())
+        User update = userRepository.findById(user.getId())
         .orElseThrow(() -> new UsernameNotFoundException("No User found for username -> " + user.getUsername()));
         update.setUsername(user.getUsername());
         update.setEmail(user.getEmail());
         update.setActive(user.isActive());
         update.setRole(user.getRole());
+        update.setImage(user.getImage());
         userRepository.save(update);
 
         return update;
+    }
+
+    public User resetPassword(ResetPasswordDto obj) throws Exception{
+        User user = userRepository.findByUsername(obj.getUsername())
+                .orElseThrow();
+
+        if(!user.getPassword().equals(obj.getOldPassword())) 
+            throw new Exception("Incorrect Old Password");
+        else if(!obj.getNewPassword1().equals(obj.getNewPassword2()))
+            throw new Exception("Passwords do not match");
+        else {
+            user.setPassword(obj.getNewPassword1());
+            userRepository.save(user);
+            return user;
+        }
+    }
+
+    public long getCountActive() {
+        return userRepository.countByActive(true);
+    }
+
+    public long getCount() {
+        return userRepository.count();
+    }
+
+    public byte[] getImage(Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow();
+
+        return user.getImage();
     }
 }

@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.example.Backend_Project.enums.UserRole;
 
-public class LoginResponse {
+public class LoginResponseDto {
 
     private String invalidCredentialsError;
     
@@ -14,9 +14,9 @@ public class LoginResponse {
 
     private UserRole role;
     
-    public LoginResponse() {}
+    public LoginResponseDto() {}
     
-    public LoginResponse(String err) {
+    public LoginResponseDto(String err) {
         invalidCredentialsError = err;
     }
     

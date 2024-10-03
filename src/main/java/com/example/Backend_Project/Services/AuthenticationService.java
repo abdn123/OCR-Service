@@ -30,8 +30,9 @@ public class AuthenticationService {
             );
         System.out.println("Username: " + input.getUsername());
         System.out.println("Password: " + input.getPassword());
+
         User user = userRepository.findByUsername(input.getUsername())
-                .orElseThrow();
+        .orElse(null);
         
         if(!user.isActive())
             throw new Exception("User account not active.");

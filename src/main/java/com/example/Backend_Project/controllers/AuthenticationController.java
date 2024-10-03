@@ -1,6 +1,8 @@
 package com.example.Backend_Project.controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.Backend_Project.Entities.User;
 import com.example.Backend_Project.Services.AuthenticationService;
 import com.example.Backend_Project.Services.JwtService;
-import com.example.Backend_Project.dto.LoginResponse;
+import com.example.Backend_Project.dto.LoginResponseDto;
 import com.example.Backend_Project.dto.LoginUserDto;
 
 import lombok.RequiredArgsConstructor;
@@ -26,28 +28,24 @@ public class AuthenticationController {
     private final JwtService jwtService;    
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(
+    public ResponseEntity<LoginResponseDto> authenticate(
         @RequestBody LoginUserDto request
     ) {
         
-        LoginResponse loginResponse = new LoginResponse();
+        LoginResponseDto loginResponse = new LoginResponseDto();
         try {
             User registeredUser = authenticationService.authenticate(request);
             if (registeredUser == null) {
-                return ResponseEntity.status(401).body(new LoginResponse("Incorrect Username or Password"));    
+                return ResponseEntity.status(401).body(new LoginResponseDto("Incorrect Username or Password"));    
             }
             String jwtToken = jwtService.generateToken(registeredUser);
             loginResponse.setToken(jwtToken);
             loginResponse.setSetExpiresIn(jwtService.extractExpiration(jwtToken));
             return ResponseEntity.ok(loginResponse);
+        } catch(BadCredentialsException | InternalAuthenticationServiceException e) {
+            return ResponseEntity.status(401).body(new LoginResponseDto("Incorrect Username or Password"));
         } catch (Exception e) {
-            return ResponseEntity.status(401).body(new LoginResponse(e.getMessage()));
+            return ResponseEntity.status(401).body(new LoginResponseDto(e.getMessage()));
         }
-        
-        
-        
-
-        
-
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.Backend_Project.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,20 +19,19 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 
 @Table
 @Entity(name = "user_info")
-@EqualsAndHashCode(of = "user_ID")
 @AllArgsConstructor
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="user_ID",unique = true, nullable = false)
-    private Long user_ID;
+    @Column(name="id",unique = true, nullable = false)
+    private Long id;
 
     @Column(name="username",unique=true, nullable=false)
     private String username;
@@ -49,20 +50,25 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    @Column(name="image", nullable=true)
+    @JsonInclude(Include.NON_NULL)
+    @Lob byte[] image;
+
     public User(){}
 
-    public User(String username, String email, String password, boolean active, UserRole role) {
+    public User(String username, String email, String password, boolean active, UserRole role, byte[] image) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.active = active;
         this.role = role;
+        this.image = image;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.role == UserRole.ADMIN) {
-        return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         }
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
@@ -105,15 +111,23 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public Long getUser_ID() {
-        return user_ID;
+    public Long getId() {
+        return id;
     }
 
-    public void setUser_ID(Long user_ID) {
-        this.user_ID = user_ID;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 }

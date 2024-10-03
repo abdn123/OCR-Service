@@ -14,6 +14,8 @@ public class RegisterUserDto {
 
     private UserRole role;
 
+    private byte[] image;
+
     public String getUsername() {
         return username;
     }
@@ -52,5 +54,13 @@ public class RegisterUserDto {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 }
