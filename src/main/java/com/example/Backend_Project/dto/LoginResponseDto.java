@@ -1,8 +1,8 @@
-package com.example.Backend_Project.dto;
+package com.example.backend_project.dto;
 
 import java.util.Date;
 
-import com.example.Backend_Project.enums.UserRole;
+import com.example.backend_project.enums.UserRole;
 
 public class LoginResponseDto {
 

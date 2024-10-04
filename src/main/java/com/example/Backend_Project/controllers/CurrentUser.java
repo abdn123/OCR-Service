@@ -1,4 +1,4 @@
-package com.example.Backend_Project.controllers;
+package com.example.backend_project.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.Backend_Project.Entities.User;
-import com.example.Backend_Project.Services.UserService;
-import com.example.Backend_Project.dto.ImageResponse;
+import com.example.backend_project.Entities.User;
+import com.example.backend_project.Services.UserService;
+import com.example.backend_project.dto.ImageResponse;
 
 import lombok.RequiredArgsConstructor;
 

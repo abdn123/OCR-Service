@@ -1,4 +1,4 @@
-package com.example.Backend_Project.Services;
+package com.example.backend_project.Services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.example.Backend_Project.Entities.User;
-import com.example.Backend_Project.Repositories.UserRepository;
-import com.example.Backend_Project.dto.RegisterUserDto;
-import com.example.Backend_Project.dto.ResetPasswordDto;
+import com.example.backend_project.Entities.User;
+import com.example.backend_project.Repositories.UserRepository;
+import com.example.backend_project.dto.RegisterUserDto;
+import com.example.backend_project.dto.ResetPasswordDto;
 
 @Service
 public class UserService {

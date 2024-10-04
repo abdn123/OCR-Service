@@ -1,4 +1,4 @@
-package com.example.Backend_Project.config;
+package com.example.backend_project.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.example.Backend_Project.Repositories.UserRepository;
+import com.example.backend_project.Repositories.UserRepository;
 
 import lombok.AllArgsConstructor;
 

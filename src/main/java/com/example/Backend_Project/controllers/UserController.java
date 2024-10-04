@@ -1,4 +1,4 @@
-package com.example.Backend_Project.controllers;
+package com.example.backend_project.controllers;
 
 import java.util.List;
 
@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.Backend_Project.Entities.User;
-import com.example.Backend_Project.Services.JwtService;
-import com.example.Backend_Project.Services.UserService;
-import com.example.Backend_Project.dto.GetUsersDto;
-import com.example.Backend_Project.dto.RegisterUserDto;
-import com.example.Backend_Project.dto.ResetPasswordDto;
-import com.example.Backend_Project.dto.UserMessageDto;
+import com.example.backend_project.Entities.User;
+import com.example.backend_project.Services.JwtService;
+import com.example.backend_project.Services.UserService;
+import com.example.backend_project.dto.GetUsersDto;
+import com.example.backend_project.dto.RegisterUserDto;
+import com.example.backend_project.dto.ResetPasswordDto;
+import com.example.backend_project.dto.UserMessageDto;
 
 import lombok.RequiredArgsConstructor;
 

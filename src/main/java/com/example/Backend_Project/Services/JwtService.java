@@ -1,4 +1,4 @@
-package com.example.Backend_Project.Services;
+package com.example.backend_project.Services;
 
 import java.security.Key;
 import java.util.Date;
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.example.Backend_Project.Entities.User;
+import com.example.backend_project.Entities.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

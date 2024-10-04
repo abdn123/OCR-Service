@@ -1,4 +1,4 @@
-package com.example.Backend_Project.dto;
+package com.example.backend_project.dto;
 
 public class LoginUserDto {
 

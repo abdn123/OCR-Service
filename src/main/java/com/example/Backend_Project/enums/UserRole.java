@@ -1,4 +1,4 @@
-package com.example.Backend_Project.enums;
+package com.example.backend_project.enums;
 
 import lombok.AllArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.example.Backend_Project.Repositories;
+package com.example.backend_project.Repositories;
 
 import java.util.Optional;
 
@@ -6,7 +6,7 @@ import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.Backend_Project.Entities.User;
+import com.example.backend_project.Entities.User;
 
 
 

@@ -1,4 +1,4 @@
-package com.example.Backend_Project.controllers;
+package com.example.backend_project.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.Backend_Project.Entities.User;
-import com.example.Backend_Project.Services.AuthenticationService;
-import com.example.Backend_Project.Services.JwtService;
-import com.example.Backend_Project.dto.LoginResponseDto;
-import com.example.Backend_Project.dto.LoginUserDto;
+import com.example.backend_project.Entities.User;
+import com.example.backend_project.Services.AuthenticationService;
+import com.example.backend_project.Services.JwtService;
+import com.example.backend_project.dto.LoginResponseDto;
+import com.example.backend_project.dto.LoginUserDto;
 
 import lombok.RequiredArgsConstructor;
 

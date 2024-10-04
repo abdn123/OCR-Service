@@ -1,4 +1,4 @@
-package com.example.Backend_Project.Services;
+package com.example.backend_project.Services;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,9 +6,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import com.example.Backend_Project.Entities.User;
-import com.example.Backend_Project.Repositories.UserRepository;
-import com.example.Backend_Project.dto.LoginUserDto;
+import com.example.backend_project.Entities.User;
+import com.example.backend_project.Repositories.UserRepository;
+import com.example.backend_project.dto.LoginUserDto;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.example.Backend_Project.config;
+package com.example.backend_project.config;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,9 +44,7 @@ public class securityConfig {
                 .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider)
             .exceptionHandling(ex -> ex.authenticationEntryPoint(
-                (request, response, exception) -> {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
-                }
+                (request, response, exception) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage())
             ))
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .build();

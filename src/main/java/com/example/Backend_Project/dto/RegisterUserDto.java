@@ -1,6 +1,6 @@
-package com.example.Backend_Project.dto;
+package com.example.backend_project.dto;
 
-import com.example.Backend_Project.enums.UserRole;
+import com.example.backend_project.enums.UserRole;
 
 public class RegisterUserDto {
     

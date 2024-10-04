@@ -1,4 +1,4 @@
-package com.example.Backend_Project.config;
+package com.example.backend_project.config;
 
 import java.io.IOException;
 
@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.Backend_Project.Services.JwtService;
+import com.example.backend_project.Services.JwtService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -57,7 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if(username != null && authentication == null) {
                     UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
                     
-                    if(jwtService.isTokenValid(jwtToken, userDetails)) {
+                    if(Boolean.TRUE.equals(jwtService.isTokenValid(jwtToken, userDetails))) {
                         UsernamePasswordAuthenticationToken authToken = 
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
