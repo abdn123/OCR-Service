@@ -3,7 +3,9 @@ package com.example.backend_project.Services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.backend_project.Entities.User;
@@ -14,6 +16,8 @@ import com.example.backend_project.dto.ResetPasswordDto;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -33,7 +37,7 @@ public class UserService {
         
         user.setUsername(input.getUsername());
         user.setEmail(input.getEmail());
-        user.setPassword(input.getPassword());
+        user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setActive(input.isActive());
         user.setRole(input.getRole());
         
