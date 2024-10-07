@@ -72,12 +72,12 @@ public class UserService {
         User user = userRepository.findByUsername(obj.getUsername())
                 .orElseThrow();
 
-        if(!user.getPassword().equals(obj.getOldPassword())) 
+        if(!passwordEncoder.matches(obj.getOldPassword(), user.getPassword())) 
             throw new Exception("Incorrect Old Password");
         else if(!obj.getNewPassword1().equals(obj.getNewPassword2()))
             throw new Exception("Passwords do not match");
         else {
-            user.setPassword(obj.getNewPassword1());
+            user.setPassword(passwordEncoder.encode(obj.getNewPassword1()));
             userRepository.save(user);
             return user;
         }

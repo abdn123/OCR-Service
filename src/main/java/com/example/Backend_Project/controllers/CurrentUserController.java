@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping
 @RestController
 @RequiredArgsConstructor
-public class CurrentUser {
+public class CurrentUserController {
 
     private final UserService userService;
 
