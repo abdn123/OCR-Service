@@ -1,4 +1,4 @@
-package com.example.backend_project.Entities;
+package com.example.backend_project.entities;
 
 import java.util.Collection;
 import java.util.List;

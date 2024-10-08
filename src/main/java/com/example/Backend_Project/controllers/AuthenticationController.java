@@ -3,29 +3,28 @@ package com.example.backend_project.controllers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.backend_project.Entities.User;
-import com.example.backend_project.Services.AuthenticationService;
-import com.example.backend_project.Services.JwtService;
 import com.example.backend_project.dto.LoginResponseDto;
 import com.example.backend_project.dto.LoginUserDto;
+import com.example.backend_project.entities.User;
+import com.example.backend_project.services.AuthenticationService;
+import com.example.backend_project.services.JwtService;
 
-import lombok.RequiredArgsConstructor;
-
-
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/auth")
-@RequiredArgsConstructor
 public class AuthenticationController {
     
     private final AuthenticationService authenticationService;
-    private final JwtService jwtService;    
+    private final JwtService jwtService;
+
+    public AuthenticationController(AuthenticationService authenticationService, JwtService jwtService) {
+        this.authenticationService = authenticationService;
+        this.jwtService = jwtService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> authenticate(

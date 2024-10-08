@@ -3,7 +3,6 @@ package com.example.backend_project.config;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,22 +17,23 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class securityConfig {
 
-    @Autowired
-    JwtAuthFilter jwtAuthFilter;
-    @Autowired
-    AuthenticationProvider authenticationProvider;
+    private final JwtAuthFilter jwtAuthFilter;
+    private final AuthenticationProvider authenticationProvider;
+
+    public securityConfig(JwtAuthFilter jwtAuthFilter, AuthenticationProvider authenticationProvider) {
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.authenticationProvider = authenticationProvider;
+    }
     
     @Bean    
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
             .cors((cors -> cors.configurationSource(corsConfigurationSource())))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize

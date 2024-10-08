@@ -11,23 +11,26 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.backend_project.Entities.User;
-import com.example.backend_project.Services.JwtService;
-import com.example.backend_project.Services.UserService;
 import com.example.backend_project.dto.GetUsersDto;
 import com.example.backend_project.dto.RegisterUserDto;
 import com.example.backend_project.dto.ResetPasswordDto;
 import com.example.backend_project.dto.UserMessageDto;
-
-import lombok.RequiredArgsConstructor;
+import com.example.backend_project.entities.User;
+import com.example.backend_project.services.JwtService;
+import com.example.backend_project.services.UserService;
 
 
 @RequestMapping("/users")
 @RestController
-@RequiredArgsConstructor
 public class UserController {
+    
     private final UserService userService;
     private final JwtService jwtService;
+
+    public UserController(UserService userService, JwtService jwtService) {
+        this.userService = userService;
+        this.jwtService = jwtService;
+    }
 
     @GetMapping
     public ResponseEntity<List<User>> allUsers() {

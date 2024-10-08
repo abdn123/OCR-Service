@@ -1,26 +1,28 @@
-package com.example.backend_project.Services;
+package com.example.backend_project.services;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.backend_project.Entities.User;
-import com.example.backend_project.Repositories.UserRepository;
 import com.example.backend_project.dto.RegisterUserDto;
 import com.example.backend_project.dto.ResetPasswordDto;
+import com.example.backend_project.entities.User;
+import com.example.backend_project.repositories.UserRepository;
 
 @Service
 public class UserService {
+    
     private final UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    static BadCredentialsException badCredException = new BadCredentialsException("Bad Credentials");
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> allUsers() {
@@ -50,14 +52,16 @@ public class UserService {
     }
 
     public void deleteUser(String username) {
-        User userDetails = userRepository.findByUsername(username)
-        .orElseThrow(() -> new UsernameNotFoundException("No User found for username -> " + username));
-            userRepository.delete(userDetails);
+        User user = userRepository.findByUsername(username);
+        if(user == null) 
+            throw badCredException;
+        else
+            userRepository.delete(user);
     }
 
     public User updateUser(User user) {
         User update = userRepository.findById(user.getId())
-        .orElseThrow(() -> new UsernameNotFoundException("No User found for username -> " + user.getUsername()));
+        .orElseThrow(() -> badCredException);
         update.setUsername(user.getUsername());
         update.setEmail(user.getEmail());
         update.setActive(user.isActive());
@@ -69,9 +73,10 @@ public class UserService {
     }
 
     public User resetPassword(ResetPasswordDto obj) throws Exception{
-        User user = userRepository.findByUsername(obj.getUsername())
-                .orElseThrow();
+        User user = userRepository.findByUsername(obj.getUsername());
 
+        if(user == null)
+            throw badCredException;
         if(!passwordEncoder.matches(obj.getOldPassword(), user.getPassword())) 
             throw new Exception("Incorrect Old Password");
         else if(!obj.getNewPassword1().equals(obj.getNewPassword2()))

@@ -8,18 +8,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.backend_project.Entities.User;
-import com.example.backend_project.Services.UserService;
 import com.example.backend_project.dto.ImageResponse;
-
-import lombok.RequiredArgsConstructor;
+import com.example.backend_project.entities.User;
+import com.example.backend_project.services.UserService;
 
 @RequestMapping
 @RestController
-@RequiredArgsConstructor
 public class CurrentUserController {
 
     private final UserService userService;
+
+    public CurrentUserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/me")
     public ResponseEntity<User> authenticatedUser() {

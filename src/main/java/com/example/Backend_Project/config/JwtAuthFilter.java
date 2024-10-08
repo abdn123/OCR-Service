@@ -2,7 +2,6 @@ package com.example.backend_project.config;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,7 +12,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.backend_project.Services.JwtService;
+import com.example.backend_project.services.JwtService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,10 +22,13 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     
-    @Autowired
     UserDetailsService userDetailsService;
-    @Autowired
     JwtService jwtService;
+
+    public JwtAuthFilter(UserDetailsService userDetailsService, JwtService jwtService) {
+        this.userDetailsService = userDetailsService;
+        this.jwtService = jwtService;
+    }
 
     @Override
     protected void doFilterInternal(

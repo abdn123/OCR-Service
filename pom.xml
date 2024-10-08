@@ -75,7 +75,7 @@
 		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if you prefer Gson -->
+			<artifactId>jjwt-jackson</artifactId>
 			<version>0.11.5</version>
 			<scope>runtime</scope>
 		</dependency>
@@ -111,7 +111,7 @@
 			</activation>
 			<properties>
 				<sonar.host.url>http://localhost:9000</sonar.host.url>
-				<sonar.token>sqa_3671742f474c1cf6db2e52e660c809026aeec79e</sonar.token>
+				<sonar.token>${env.SONAR_TOKEN}</sonar.token>
 			</properties>
 		</profile>
 	</profiles>
