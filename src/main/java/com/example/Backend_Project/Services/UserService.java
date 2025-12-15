@@ -14,7 +14,7 @@ import com.example.backend_project.repositories.UserRepository;
 
 @Service
 public class UserService {
-    
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -27,23 +27,23 @@ public class UserService {
 
     public List<User> allUsers() {
         List<User> users = new ArrayList<>();
-        
+
         userRepository.findAll().forEach(users::add);
 
         return users;
     }
 
     public User signup(RegisterUserDto input) {
-        
+
         User user = new User();
-        
+
         user.setUsername(input.getUsername());
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setActive(input.isActive());
         user.setRole(input.getRole());
-        
-        if(input.getImage() != null)
+
+        if (input.getImage() != null)
             user.setImage(input.getImage());
         else
             user.setImage(null);
@@ -53,7 +53,7 @@ public class UserService {
 
     public void deleteUser(String username) {
         User user = userRepository.findByUsername(username);
-        if(user == null) 
+        if (user == null)
             throw badCredException;
         else
             userRepository.delete(user);
@@ -61,7 +61,7 @@ public class UserService {
 
     public User updateUser(User user) {
         User update = userRepository.findById(user.getId())
-        .orElseThrow(() -> badCredException);
+                .orElseThrow(() -> badCredException);
         update.setUsername(user.getUsername());
         update.setEmail(user.getEmail());
         update.setActive(user.isActive());
@@ -72,14 +72,14 @@ public class UserService {
         return update;
     }
 
-    public User resetPassword(ResetPasswordDto obj) throws Exception{
+    public User resetPassword(ResetPasswordDto obj) throws Exception {
         User user = userRepository.findByUsername(obj.getUsername());
 
-        if(user == null)
+        if (user == null)
             throw badCredException;
-        if(!passwordEncoder.matches(obj.getOldPassword(), user.getPassword())) 
+        if (!passwordEncoder.matches(obj.getOldPassword(), user.getPassword()))
             throw new Exception("Incorrect Old Password");
-        else if(!obj.getNewPassword1().equals(obj.getNewPassword2()))
+        else if (!obj.getNewPassword1().equals(obj.getNewPassword2()))
             throw new Exception("Passwords do not match");
         else {
             user.setPassword(passwordEncoder.encode(obj.getNewPassword1()));
@@ -98,7 +98,7 @@ public class UserService {
 
     public byte[] getImage(Long id) {
         User user = userRepository.findById(id)
-            .orElseThrow();
+                .orElseThrow();
 
         return user.getImage();
     }

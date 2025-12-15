@@ -30,19 +30,19 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id",unique = true, nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name="username",unique=true, nullable=false)
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(unique=true, length=100, nullable=false)
+    @Column(unique = true, length = 100, nullable = false)
     private String email;
 
     @JsonIgnore
     @Column(nullable = false)
     private String password;
-    
+
     @Column(nullable = false)
     private boolean active;
 
@@ -50,11 +50,16 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(name="image", nullable=true)
-    @JsonInclude(Include.NON_NULL)
-    @Lob byte[] image;
+    @Column(name = "doc_count", nullable = true)
+    private Long docCount;
 
-    public User(){}
+    @Column(name = "image", nullable = true)
+    @JsonInclude(Include.NON_NULL)
+    @Lob
+    byte[] image;
+
+    public User() {
+    }
 
     public User(String username, String email, String password, boolean active, UserRole role, byte[] image) {
         this.username = username;
@@ -77,7 +82,7 @@ public class User implements UserDetails {
     public String getUsername() {
         return username;
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -129,5 +134,13 @@ public class User implements UserDetails {
 
     public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public Long getDocCount() {
+        return docCount;
+    }
+
+    public void setDocCount(Long docCount) {
+        this.docCount = docCount;
     }
 }
