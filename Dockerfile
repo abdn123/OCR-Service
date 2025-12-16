@@ -12,7 +12,7 @@ RUN ./mvnw dependency:go-offline
 COPY src src
 RUN ./mvnw clean package -DskipTests
 
-COPY target/*.jar /app.jar
+COPY --from=build /app/target/*.jar /app.jar
 COPY springboot.p12 /springboot.p12
 
 ENTRYPOINT ["java","-jar","/app.jar"]
