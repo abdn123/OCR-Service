@@ -6,11 +6,13 @@ COPY mvnw .
 COPY .mvn .mvn
 
 RUN chmod +x mvnw
-
 RUN ./mvnw dependency:go-offline
 
 COPY src src
 RUN ./mvnw clean package -DskipTests
+
+FROM eclipse-temurin:17-jdk-alpine
+WORKDIR /
 
 COPY --from=build /app/target/*.jar /app.jar
 COPY springboot.p12 /springboot.p12
