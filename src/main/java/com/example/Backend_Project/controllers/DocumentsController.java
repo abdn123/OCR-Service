@@ -55,4 +55,9 @@ public class DocumentsController {
     public ResponseEntity<Optional<Document>> getDocumentById(@PathVariable Long id) {
         return ResponseEntity.ok(documentsService.findById(id));
     }
+
+    @GetMapping("/download/{id}")
+    public ResponseEntity<Optional<Document>> downloadDocument(@PathVariable Long id) {
+        return ResponseEntity.ok(documentsService.downloadDocument(id));
+    }
 }

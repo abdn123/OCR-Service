@@ -41,6 +41,9 @@ public class Document {
     @Column(name = "error")
     private String error;
 
+    @Column(name = "classification_type")
+    private String classificationType;
+
     public Long getId() {
         return id;
     }
@@ -105,10 +108,19 @@ public class Document {
         this.error = error;
     }
 
+    public String getClassificationType() {
+        return classificationType;
+    }
+
+    public void setClassificationType(String classificationType) {
+        this.classificationType = classificationType;
+    }
+
     public Document() {
     }
 
-    public Document(String name, String type, String text, String metadata, Long user, byte[] document, String error) {
+    public Document(String name, String type, String text, String metadata, Long user, byte[] document, String error,
+            String classificationType) {
         this.name = name;
         this.type = type;
         this.text = text;
@@ -116,6 +128,7 @@ public class Document {
         this.user = user;
         this.document = document;
         this.error = error;
+        this.classificationType = classificationType;
     }
 
     public Document(Long id, String name, String type, String metadata, Long user) {
@@ -126,17 +139,23 @@ public class Document {
         this.user = user;
     }
 
-    public Document(Long id, String name, String type, Long user) {
+    public Document(Long id, String name, String type, Long user, String classificationType) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.user = user;
+        this.classificationType = classificationType;
     }
 
     public Document(String text, String metadata, String name) {
         this.name = name;
         this.text = text;
         this.metadata = metadata;
+    }
+
+    public Document(byte[] document, String name) {
+        this.document = document;
+        this.name = name;
     }
 
 }

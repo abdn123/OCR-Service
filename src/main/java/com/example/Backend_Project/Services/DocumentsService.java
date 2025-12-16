@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.example.backend_project.dto.DocumentResponseDto;
 import com.example.backend_project.entities.Document;
 import com.example.backend_project.entities.User;
@@ -70,7 +73,7 @@ public class DocumentsService {
         doc.setMetaData(metadata.toString());
 
         document = new Document(file.getOriginalFilename(), doc.getType(), doc.getText(), doc.getMetaData(),
-                currentUser.getId(), file.getBytes(), null);
+                currentUser.getId(), file.getBytes(), null, classifyDocument(doc.getText()));
         documentRepository.save(document);
         return doc;
     }
@@ -93,5 +96,77 @@ public class DocumentsService {
 
     public Optional<Document> findById(Long id) {
         return documentRepository.findById(id);
+    }
+
+    public Optional<Document> downloadDocument(Long id) {
+        return documentRepository.findDocumentById(id);
+    }
+
+    private String classifyDocument(String text) {
+        if (text == null || text.isEmpty()) {
+            return "generic"; // generic
+        }
+
+        text = text.toLowerCase();
+
+        Map<String, Integer> scores = new LinkedHashMap<>();
+        scores.put("generic", 0);
+        scores.put("invoice", 0);
+        scores.put("agreement", 0);
+        scores.put("statement", 0);
+
+        // -------- INVOICE --------
+        if (text.contains("invoice"))
+            scores.compute("invoice", (k, v) -> v + 40);
+        if (text.contains("bill"))
+            scores.compute("invoice", (k, v) -> v + 25);
+        if (text.contains("receipt"))
+            scores.compute("invoice", (k, v) -> v + 20);
+        if (text.contains("total"))
+            scores.compute("invoice", (k, v) -> v + 10);
+        if (text.contains("vat"))
+            scores.compute("invoice", (k, v) -> v + 10);
+
+        // -------- AGREEMENT --------
+        if (text.contains("agreement"))
+            scores.compute("agreement", (k, v) -> v + 40);
+        if (text.contains("contract"))
+            scores.compute("agreement", (k, v) -> v + 40);
+        if (text.contains("clause"))
+            scores.compute("agreement", (k, v) -> v + 15);
+        if (text.contains("partnership"))
+            scores.compute("agreement", (k, v) -> v + 15);
+        if (text.contains("terms"))
+            scores.compute("agreement", (k, v) -> v + 15);
+        if (text.contains("parties"))
+            scores.compute("agreement", (k, v) -> v + 15);
+
+        // -------- STATEMENT --------
+        if (text.contains("statement"))
+            scores.compute("statement", (k, v) -> v + 40);
+        if (text.contains("balance"))
+            scores.compute("statement", (k, v) -> v + 20);
+        if (text.contains("account"))
+            scores.compute("statement", (k, v) -> v + 20);
+        if (text.contains("period"))
+            scores.compute("statement", (k, v) -> v + 10);
+
+        // -------- SELECT HIGHEST --------
+        String bestMatch = "generic";
+        int maxScore = 0;
+
+        for (Map.Entry<String, Integer> entry : scores.entrySet()) {
+            if (entry.getValue() > maxScore) {
+                maxScore = entry.getValue();
+                bestMatch = entry.getKey();
+            }
+        }
+
+        // -------- THRESHOLD CHECK --------
+        if (maxScore < 50) {
+            return "generic"; // generic
+        }
+
+        return bestMatch;
     }
 }
