@@ -15,6 +15,5 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /
 
 COPY --from=build /app/target/*.jar /app.jar
-COPY springboot.p12 /springboot.p12
 
 ENTRYPOINT ["java","-jar","/app.jar"]
