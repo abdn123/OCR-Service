@@ -42,6 +42,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setActive(input.isActive());
         user.setRole(input.getRole());
+        user.setDocCount(Long.valueOf(0));
 
         if (input.getImage() != null)
             user.setImage(input.getImage());
