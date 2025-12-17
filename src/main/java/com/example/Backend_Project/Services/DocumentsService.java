@@ -36,6 +36,14 @@ public class DocumentsService {
         this.documentRepository = documentRepository;
     }
 
+    String tesseractPath = System.getenv().getOrDefault(
+            "TESSERACT_PATH",
+            "/usr/bin");
+
+    String tessdataPath = System.getenv().getOrDefault(
+            "TESSDATA_PATH",
+            "/usr/share/tessdata");
+
     private PDFParserConfig getPdfParserConfig() {
         PDFParserConfig pdfConfig = new PDFParserConfig();
         pdfConfig.setEnableAutoSpace(true);
@@ -62,8 +70,8 @@ public class DocumentsService {
 
         if (doc.getType().startsWith("image/") || doc.getType().equals("application/pdf")) {
             TesseractOCRConfig ocrConfig = new TesseractOCRConfig();
-            ocrConfig.setTesseractPath("C:/Program Files/Tesseract-OCR/");
-            ocrConfig.setTessdataPath("C:/Program Files/Tesseract-OCR/tessdata");
+            ocrConfig.setTesseractPath(tesseractPath);
+            ocrConfig.setTessdataPath(tessdataPath);
             ocrConfig.setLanguage("eng");
             context.set(TesseractOCRConfig.class, ocrConfig);
             context.set(org.apache.tika.parser.pdf.PDFParserConfig.class, getPdfParserConfig());
@@ -104,7 +112,7 @@ public class DocumentsService {
 
     private String classifyDocument(String text) {
         if (text == null || text.isEmpty()) {
-            return "generic"; // generic
+            return "generic";
         }
 
         text = text.toLowerCase();
@@ -162,9 +170,8 @@ public class DocumentsService {
             }
         }
 
-        // -------- THRESHOLD CHECK --------
         if (maxScore < 50) {
-            return "generic"; // generic
+            return "generic";
         }
 
         return bestMatch;
