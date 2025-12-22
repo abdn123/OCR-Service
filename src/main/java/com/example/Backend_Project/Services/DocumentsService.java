@@ -51,11 +51,11 @@ public class DocumentsService {
 
     String tesseractPath = System.getenv().getOrDefault(
             "TESSERACT_PATH",
-            "C:/Program Files/Tesseract-OCR/");
+            "/usr/bin");
 
     String tessdataPath = System.getenv().getOrDefault(
             "TESSDATA_PATH",
-            "C:/Program Files/Tesseract-OCR/tessdata");
+            "/usr/share/tessdata");
 
     private PDFParserConfig getPdfParserConfig() {
         PDFParserConfig pdfConfig = new PDFParserConfig();
