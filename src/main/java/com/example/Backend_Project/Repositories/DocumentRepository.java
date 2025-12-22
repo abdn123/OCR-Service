@@ -21,6 +21,7 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     @Query("SELECT COUNT(*) FROM document d WHERE d.user = :user")
     long countByUser(Long user);
 
+    @Query("SELECT new com.example.backend_project.entities.Document(d.id, d.name, d.type, d.user, d.classificationType) FROM document d")
     List<Document> findAll();
 
     long count();

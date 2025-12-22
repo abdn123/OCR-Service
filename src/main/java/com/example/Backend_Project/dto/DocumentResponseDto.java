@@ -6,8 +6,11 @@ public class DocumentResponseDto {
     String type;
     String text;
     String metaData;
+    String content;
+    String classificationType;
 
-    public DocumentResponseDto() {}
+    public DocumentResponseDto() {
+    }
 
     public DocumentResponseDto(String error) {
         this.error = error;
@@ -35,6 +38,22 @@ public class DocumentResponseDto {
 
     public void setMetaData(String metaData) {
         this.metaData = metaData;
+    }
+
+    public String getClassificationType() {
+        return classificationType;
+    }
+
+    public void setClassificationType(String classificationType) {
+        this.classificationType = classificationType;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getError() {

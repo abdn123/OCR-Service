@@ -13,6 +13,7 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.ocr.TesseractOCRConfig;
 import org.apache.tika.parser.pdf.PDFParserConfig;
 import org.apache.tika.sax.BodyContentHandler;
+import org.json.simple.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,26 +24,38 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.example.backend_project.dto.DocumentResponseDto;
+import com.example.backend_project.dto.InvoiceExtractionResult;
 import com.example.backend_project.entities.Document;
+import com.example.backend_project.entities.InvoiceExtractedFields;
 import com.example.backend_project.entities.User;
 import com.example.backend_project.repositories.DocumentRepository;
+import com.example.backend_project.repositories.InvoiceExtractedFieldsRepository;
+import com.example.backend_project.repositories.UserRepository;
 
 @Service
 public class DocumentsService {
 
     private final DocumentRepository documentRepository;
+    private final UserRepository userRepository;
+    private final InvoiceExtractedFieldsRepository invoiceExtractedFieldsRepository;
+    private final InvoiceExtractionService invoiceExtractionService;
 
-    public DocumentsService(DocumentRepository documentRepository) {
+    public DocumentsService(DocumentRepository documentRepository, UserRepository userRepository,
+            InvoiceExtractedFieldsRepository invoiceExtractedFieldsRepository,
+            InvoiceExtractionService invoiceExtractionService) {
         this.documentRepository = documentRepository;
+        this.userRepository = userRepository;
+        this.invoiceExtractedFieldsRepository = invoiceExtractedFieldsRepository;
+        this.invoiceExtractionService = invoiceExtractionService;
     }
 
     String tesseractPath = System.getenv().getOrDefault(
             "TESSERACT_PATH",
-            "/usr/bin");
+            "C:/Program Files/Tesseract-OCR/");
 
     String tessdataPath = System.getenv().getOrDefault(
             "TESSDATA_PATH",
-            "/usr/share/tessdata");
+            "C:/Program Files/Tesseract-OCR/tessdata");
 
     private PDFParserConfig getPdfParserConfig() {
         PDFParserConfig pdfConfig = new PDFParserConfig();
@@ -83,6 +96,31 @@ public class DocumentsService {
         document = new Document(file.getOriginalFilename(), doc.getType(), doc.getText(), doc.getMetaData(),
                 currentUser.getId(), file.getBytes(), null, classifyDocument(doc.getText()));
         documentRepository.save(document);
+        currentUser.setDocCount(currentUser.getDocCount() + 1);
+
+        String extractedType = document.getClassificationType();
+        doc.setClassificationType(extractedType);
+
+        InvoiceExtractionResult extractionResult = null;
+
+        if ("invoice".equals(extractedType)) {
+            extractionResult = invoiceExtractionService.extractInvoice(doc.getText());
+            adjustInvoiceConfidence(extractionResult, doc.getText());
+            invoiceExtractedFieldsRepository.save(new InvoiceExtractedFields(
+                    document.getId(),
+                    extractionResult.getInvoiceNumber().getValue(),
+                    extractionResult.getInvoiceDate().getValue(),
+                    extractionResult.getTotalAmount().getValue(),
+                    extractionResult.getVendorName().getValue()));
+            JSONObject json = new JSONObject();
+            json.put("invoice_number", extractionResult.getInvoiceNumber().getValue());
+            json.put("invoice_date", extractionResult.getInvoiceDate().getValue());
+            json.put("total_amount", extractionResult.getTotalAmount().getValue());
+            json.put("vendor_name", extractionResult.getVendorName().getValue());
+            doc.setContent(json.toString());
+        }
+
+        userRepository.save(currentUser);
         return doc;
     }
 
@@ -176,4 +214,20 @@ public class DocumentsService {
 
         return bestMatch;
     }
+
+    private void adjustInvoiceConfidence(InvoiceExtractionResult result, String text) {
+        if (result == null)
+            return;
+
+        if (text.toLowerCase().contains("invoice")) {
+            result.getInvoiceNumber().setConfidence(
+                    Math.min(result.getInvoiceNumber().getConfidence() + 5, 100));
+        }
+
+        if (text.toLowerCase().contains("total")) {
+            result.getTotalAmount().setConfidence(
+                    Math.min(result.getTotalAmount().getConfidence() + 5, 100));
+        }
+    }
+
 }
